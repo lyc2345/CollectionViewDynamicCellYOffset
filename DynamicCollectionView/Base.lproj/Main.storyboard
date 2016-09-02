@@ -37,17 +37,21 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="261" height="223"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="m7R-cP-cXu">
-                                                            <rect key="frame" x="2" y="2" width="257" height="219"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="261" height="223"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="219" id="wtf-zM-5sM"/>
+                                                                <constraint firstAttribute="height" constant="223" id="OYD-bP-390"/>
                                                             </constraints>
                                                         </imageView>
                                                     </subviews>
-                                                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                     <constraints>
                                                         <constraint firstItem="m7R-cP-cXu" firstAttribute="top" secondItem="h76-ar-Hzr" secondAttribute="top" constant="2" id="9UC-Mg-MZi"/>
+                                                        <constraint firstAttribute="trailing" secondItem="m7R-cP-cXu" secondAttribute="trailing" id="GZU-a9-1j5"/>
                                                         <constraint firstItem="m7R-cP-cXu" firstAttribute="leading" secondItem="h76-ar-Hzr" secondAttribute="leading" constant="2" id="K0i-sx-7hO"/>
+                                                        <constraint firstAttribute="bottom" secondItem="m7R-cP-cXu" secondAttribute="bottom" id="Xln-hs-m0L"/>
+                                                        <constraint firstItem="m7R-cP-cXu" firstAttribute="top" secondItem="h76-ar-Hzr" secondAttribute="top" id="ahA-to-1hx"/>
                                                         <constraint firstAttribute="bottom" secondItem="m7R-cP-cXu" secondAttribute="bottom" constant="2" id="bFK-n2-CCD"/>
+                                                        <constraint firstItem="m7R-cP-cXu" firstAttribute="leading" secondItem="h76-ar-Hzr" secondAttribute="leading" id="dDJ-cR-aah"/>
                                                         <constraint firstAttribute="trailing" secondItem="m7R-cP-cXu" secondAttribute="trailing" constant="2" id="osm-xQ-4by"/>
                                                     </constraints>
                                                     <userDefinedRuntimeAttributes>
@@ -55,6 +59,14 @@
                                                             <real key="value" value="5"/>
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="9UC-Mg-MZi"/>
+                                                            <exclude reference="K0i-sx-7hO"/>
+                                                            <exclude reference="bFK-n2-CCD"/>
+                                                            <exclude reference="osm-xQ-4by"/>
+                                                        </mask>
+                                                    </variation>
                                                 </view>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -67,7 +79,7 @@
                                         </constraints>
                                         <connections>
                                             <outlet property="imageView" destination="m7R-cP-cXu" id="WnI-EF-Vpb"/>
-                                            <outlet property="imageViewheightLayoutConstraint" destination="wtf-zM-5sM" id="xeB-Iz-xkF"/>
+                                            <outlet property="imageViewheightLayoutConstraint" destination="OYD-bP-390" id="4dU-tw-QUV"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>

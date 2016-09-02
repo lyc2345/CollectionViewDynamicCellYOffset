@@ -56,10 +56,14 @@ class CollectionViewLayout: UICollectionViewLayout {
     }
     
     override func prepareLayout() {
+        // clean cache and do prepare again, otherwise it will only keep the first time of layout.
         cache.removeAll()
+        // This is also, calculate the height everytime, otherwise it will keep the longest height after layout.
+        contentHeight = 0.0
+        
         // 1. Only calculate once
         if cache.isEmpty {
-            print("!!!!!!!!!!!!!")
+            
             // 2. Pre-Calculates the X Offset for every column and adds an array to increment the currently max Y Offset for each column
             let columnWidth = contentWidth / CGFloat(numberOfColumns)
             var xOffset = [CGFloat]()
@@ -72,7 +76,7 @@ class CollectionViewLayout: UICollectionViewLayout {
             
             // 3. Iterates through the list of items in the first section
             for item in 0 ..< collectionView!.numberOfItemsInSection(0) {
-                print("number of items in section:\(collectionView!.numberOfItemsInSection(0))")
+                
                 let indexPath = NSIndexPath(forItem: item, inSection: 0)
                 
                 // 4. Asks the delegate for the height of the picture and the annotation and calculates the cell frame.
@@ -91,11 +95,10 @@ class CollectionViewLayout: UICollectionViewLayout {
                 // 6. Updates the collection view content height
                 contentHeight = max(contentHeight, CGRectGetMaxY(frame))
                 yOffset[column] = yOffset[column] + height
-                
                 column = column >= (numberOfColumns - 1) ? 0 : ++column
+                //print("content height:\(contentHeight)")
             }
         }
-        print("cache cout:\(cache.count)")
     }
     
     func resetLayout() {

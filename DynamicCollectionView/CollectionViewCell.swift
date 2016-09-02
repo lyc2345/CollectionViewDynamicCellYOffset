@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class CollectionViewCell: UICollectionViewCell, DemoPhotoDownloadable {
     
@@ -17,7 +18,8 @@ class CollectionViewCell: UICollectionViewCell, DemoPhotoDownloadable {
     var image: UIImage? {
         
         didSet {
-            
+            self.imageView.layer.cornerRadius = 5
+            self.imageView.layer.masksToBounds = true
             guard let image = self.image, _ = imageView else {
                 return
             }
@@ -36,38 +38,35 @@ class CollectionViewCell: UICollectionViewCell, DemoPhotoDownloadable {
 
 extension CollectionViewCell {
     
-    func bind(withPresenter presenter: PicturePresentable, completion: Void -> Void) {
+    func bind(withPresenter presenter: PicturePresentable, completion: (image: UIImage) -> Void) {
         
         self.urlString = presenter.urlString
-        /*
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+        guard let string = self.urlString, URL = NSURL(string: string) else {
             
-            guard let url = self.urlString else {
-                
-                return
-            }
+            fatalError()
+        }
+        self.imageView.kf_setImageWithURL(URL, placeholderImage: nil, optionsInfo: [], progressBlock: { receivedSize, totalSize in
+            //print("\(indexPath.row): \(receivedSize)/\(totalSize)")
             
-            self.fetchImage(url) { (resultData: Result<NSData>) in
+            }, completionHandler: { image, error, cacheType, imageURL in
                 
-                let imageResult = resultData.flatMap(self.buildDemoPhoto).flatMap(self.readImage)
-                
-                do {
-                    
-                    let image = try imageResult.resolve()
-                    dispatch_async(dispatch_get_main_queue(), { 
-                        self.image = image
-                    })
-
-                } catch {
-                    print("Error: \(error)")
+                if let i = image {
+                    completion(image: i)
                 }
+                //print("\(indexPath.row): Finished")
+        })
+        /*
+        fetchImage(string) { (resultData) in
+            
+            do {
+                let image = try resultData.flatMap(self.buildDemoPhoto).flatMap(self.readImage).resolve()
+                completion(image: image)
+            } catch {
+                print("Error: \(error)")
             }
-            dispatch_async(dispatch_get_main_queue(), {
-                completion()
-            })
         }*/
     }
-//    
+    
     override func prepareForReuse() {
         
         super.prepareForReuse()

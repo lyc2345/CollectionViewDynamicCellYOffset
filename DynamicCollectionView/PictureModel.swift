@@ -24,6 +24,9 @@ extension Picture: PicturePresentable {
 }
 
 
+
+// Functors and Monads
+
 enum ImageError: ErrorType { case NoData, ParsingError }
 
 enum Result<T> {

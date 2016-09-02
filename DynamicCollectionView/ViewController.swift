@@ -45,15 +45,7 @@ struct MyService: Serviceable {
          Picture(url: "http://i.dailymail.co.uk/i/pix/2015/02/22/25EFFB6300000578-2964075-image-m-7_1424624131011.jpg"),
          Picture(url: "http://www.hawtcelebs.com/wp-content/uploads/2015/11/maria-sharapova-for-esquire-photoshoot_1.jpg"),
          Picture(url: "http://press.porsche.com/media/gallery2/d/17788-1/Maria+Sharapova+with+Panamera+S+E-Hybrid.jpg")
-         
-         
-         /*
-          Picture(url: "IMG_7744"),
-          Picture(url: "IMG_7753"),
-          Picture(url: "IMG_7758"),
-          Picture(url: "IMG_7749"),
-          Picture(url: "IMG_7763"),
-          Picture(url: "IMG_7750")*/
+
          ].flatMap { $0 as Picture })
    }
 }
@@ -68,9 +60,7 @@ class ViewController: UIViewController, DataControllable, DemoPhotoDownloadable 
    var dataView: DataViewable { return collectionView }
    var service: Serviceable = MyService()
    var items: [PicturePresentable] = []
-   var demoPhoto: [DemoPhoto] = []
    
-   var currentDownloadIndex = 0
    var images: [UIImage?] = []
    
    override func viewDidLoad() {
@@ -88,52 +78,25 @@ class ViewController: UIViewController, DataControllable, DemoPhotoDownloadable 
       collectionView.backgroundColor = UIColor.clearColor()
       collectionView.contentInset = UIEdgeInsets(top: 43, left: 5, bottom: 10, right: 5)
       
-      downloadImage()
-   }
-   
-   func downloadImage() {
-      
-      dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
-         
-         for i in 0 ..< self.items.count {
-            
-            guard let url = self.items[i].urlString as? String else {
-               
-               return
-            }
-            
-            self.fetchImage(url) { (resultData: Result<NSData>) in
-               
-               let imageResult = resultData.flatMap(self.buildDemoPhoto).flatMap(self.readImage)
-               
-               do {
-                  
-                  let image = try imageResult.resolve()
-                  self.images.append(image)
-                  dispatch_async(dispatch_get_main_queue(), {
-                     self.updateCellSize()
-                  })
-                  
-               } catch {
-                  print("Error: \(error)")
-               }
-            }
-         }
+      for _ in 0 ..< items.count {
+         self.images.append(nil)
       }
    }
    
-   func updateCellSize() {
+   // 每次layoutSubview 都重新layout一次
+   override func viewDidLayoutSubviews() {
       
-      if let layout = collectionView.collectionViewLayout as? CollectionViewLayout {
-         
-         //layout.resetLayout()
-         
-         collectionView.reloadData()
-      }
+      collectionView.collectionViewLayout.invalidateLayout()
    }
 }
 
 extension ViewController: UICollectionViewDelegate {
+   
+   
+   func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+      
+      (cell as! CollectionViewCell).imageView.kf_cancelDownloadTask()
+   }
    
    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
       
@@ -145,7 +108,7 @@ extension ViewController: UICollectionViewDataSource {
    
    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
       
-      return images.count
+      return items.count
    }
    
    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -154,16 +117,14 @@ extension ViewController: UICollectionViewDataSource {
          
          fatalError()
       }
-      //cell.bind(withPresenter: items[indexPath.row]) {
-         //self.updateCellSize()
-      //}
       
-      guard let ig = images[indexPath.row] else {
-         fatalError()
+      cell.imageView.kf_showIndicatorWhenLoading = true
+      
+      cell.bind(withPresenter: items[indexPath.row]) { (image) in
+         
+         self.images[indexPath.row] = image
+         collectionView.collectionViewLayout.invalidateLayout()
       }
-      
-      cell.image = ig
-      
       return cell
    }
 }
@@ -172,14 +133,14 @@ extension ViewController: CollectionViewLayouttable {
    
    func collectionView(collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath: NSIndexPath, withWidth width: CGFloat) -> CGFloat {
       
-//
-//      guard let cell = collectionView.cellForItemAtIndexPath(indexPath) as? CollectionViewCell, image = cell.image else {
-//         
-//         return 80
-//      }
-   let image = images[indexPath.row]
+      // 檢查有沒有image, 沒有高就回傳160
+      guard let image =  self.images[indexPath.row] else {
+         
+         return 160
+      }
+      // 有，做layout
       let boundingRect = CGRect(x: 0, y: 0, width: width, height: CGFloat(MAXFLOAT))
-      let rect = AVMakeRectWithAspectRatioInsideRect(image!.size, boundingRect)
+      let rect = AVMakeRectWithAspectRatioInsideRect(image.size, boundingRect)
       return rect.size.height
    }
 }
