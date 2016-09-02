@@ -7,7 +7,7 @@ target 'DynamicCollectionView' do
 
   # Pods for DynamicCollectionView
   pod 'SDWebImage', '~>3.8'
-
+  pod 'Kingfisher', '~> 2.4'
 
   target 'DynamicCollectionViewTests' do
     inherit! :search_paths
